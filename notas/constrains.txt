@@ -1,0 +1,13 @@
+
+required version 
+0.15.0 Only terraform v0.15.0 exactly
+To updgrade terraform, first edit the "required_version" setting
+
+>- 0.15 Any terraform v0.15.0 or greater
+includes Terraform v1.0.0 and above
+
+~> 0.15 Any terraform v0.15.x, but not v1.0 or later
+Minor version updates are intented to be non-disruptive
+
+>= 0.15, <2.0.0 Terraform v0.15.0 or greater, but less than v2.0.0
+Avoids major version updates

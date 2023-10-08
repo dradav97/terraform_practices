@@ -1,0 +1,6 @@
+dar formato a los archivos
+terraform fmt
+
+validar los archivos
+terraform validate
+

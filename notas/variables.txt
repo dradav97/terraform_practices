@@ -1,0 +1,155 @@
+variable "var_name" {
+  default = "default_value"
+}
+
+- no value, this value is required in terraform plan or apply
+variable "var_name" {
+}
+
+- vars how env variables 
+export TF_VAR_<var_name>="var_value"
+
+- in the command terraform
+terraform plan -var ohio_cidr="10.20.0.0/16"
+
+- in file vars
+terraform.tfvars
+terraform.tfvars.json
+*.auto.tfvars
+*.auto.tfvars.json
+
+
+- in file vars v2, NOT  RECOMMENDED
+terraform plan --var-file <name_file>
+
+
+prioridad
+
+1       variables de entorno (export TF_VAR_ejemplo="")
+2       terraform.tfvars
+3       *.auto.tfvars (por orden alfabetico)
+4       -var o --var-file (por linea de comandos)
+
+tipos
+
+default valor de la variable
+description descripcion de la variable
+type  puede ser: string, number, bool, any
+sensitive  si esta en true no vamos a ver el variable en el plan
+
+conversion de variables
+string a number y viceversa
+string a bool y viceversa
+
+variable "cantidad" {
+    default = 5
+    type = number
+}
+
+variable "cantidad" {
+    default = "5"
+    type = number
+}
+
+variable "cantidad" {
+    default = false
+    type = bool
+}
+
+variable "cantidad" {
+    default = "false"
+    type = bool
+}
+##################################################################################################
+tipos: LISTA
+
+variable "lista_cidrs" {
+    default = ["10.10.0.0/16","10.20.0.0/16"]
+                pos 0           pos 1
+    type = list(string)
+}
+
+todos los elementos de la lista deben ser del mismo tipo
+admite elementos repetidos
+
+##################################################################################################
+tipos: MAP
+
+variable "map_cidrs" {
+    default = {
+        "virginia" = "10.10.0.0/16"
+        "ohio" = "10.20.0.0/16"
+    }
+    type = map(string)
+}
+
+resource "aws_vpc" "vpc_virginia" {
+    cidr_block = var.map_cidrs["virginia"]
+}
+
+resource "aws_vpc" "vpc_ohio" {
+    cidr_block = var.map_cidrs["ohio"]
+}
+
+solo admite un tipo de variable
+
+##################################################################################################
+tipos: SET
+
+variable "set_cidrs" {
+    default = ["10.10.0.0/16","10.20.0.0/16"]
+    type = set(string)
+}
+
+resource "aws_vpc" "vpc" {
+    for_each = var.set_cidrs
+    cidr_block = each.value
+}
+
+Set no admite elementos repetidos
+No podemos acceder a elementos puntuales
+
+##################################################################################################
+tipos: OBJECT
+
+variable "virginia" {
+    type = object({
+        nombre = string
+        cantidad = number
+        cidrs = list(string)
+        disponible = bool
+        env = string
+        owner = string
+    })
+
+    default = {
+        cantidad = 1
+        cidrs = ["10.10.0.0/16"]
+        disponible = true
+        env = "Dev"
+        nombre = "virginia"
+        owner = "Nazareno"
+    }
+}
+
+resource "aws_vpc" "vpc" {
+    cidr_block = var.virginia.cidrs[0]
+    tags = {
+        Name = var.virginia.nombre
+        name = var.virginia.nombre
+        env = var.virginia.env
+    }
+}
+
+admite diferentes tipos de variables, es como un map pero esta compuesto por varios tipos de variables
+
+
+##################################################################################################
+tipos: TUPLE
+
+variable "ohio" {
+    type = tuple([string,string,number,bool,string])
+    default = ["Ohio","10.10.0.0/16",1,false,"Dev"]
+}
+
+Una tupla es similar a una lista pero puede contener diferentes tipos de elementos
