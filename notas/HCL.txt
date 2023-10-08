@@ -1,0 +1,13 @@
+HCL Hashicorp Configuration Language = Declarativo
+
+
+resource "local_file" "mensaje" {
+    content = "Contenido random"
+    filename = "archivo.txt"
+}
+
+tipo de bloque = resource
+tipo de recurso ="local_file" 
+provider = local; recurso = file 
+nombre del recurso = "mensaje"
+Argumentos = lo que va en los {}
